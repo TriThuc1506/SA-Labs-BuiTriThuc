@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Create Order</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+        crossorigin="anonymous">
+</head>
+<body>
+
+<div class="container">
+  <h1 class="mt-5">Create Order</h1>
+  <form id="orderForm" th:action="@{/submitOrder}" method="post" class="mt-4">
+    <table class="table">
+      <thead>
+      <tr>
+        <th>Product</th>
+        <th>Price</th>
+        <th>Buy</th>
+
+        <th>Quantity</th>
+      </tr>
+      </thead>
+      <tbody>
+
+      <tr th:each="product : ${products}">
+        <td th:text="${product.name}"></td>
+        <td th:text="${product.price}"></td>
+        <td>
+          <input type="checkbox" name="buy" th:value="${product.id}"
+                 onclick="toggleQuantityInput(this)">
+        </td>
+        <td>
+          <input style="display: none" type="number" class="form-control" name="quantities" min="1"
+                 placeholder="enter quantity ">
+
+        </td>
+      </tr>
+      </tbody>
+    </table>
+    <button type="button" onclick="submitOrder()" class="btn btn-primary">Submit Order</button>
+  </form>
+</div>
+
+<!-- Bootstrap JS -->
+<script
+    src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
+<script>
+  function toggleQuantityInput(checkbox) {
+    let quantityInput = checkbox.parentNode.nextElementSibling.querySelector(
+        'input[type="number"]');
+    if (checkbox.checked) {
+      quantityInput.style.display = 'block';
+    } else {
+      quantityInput.style.display = 'none';
+    }
+  }
+
+  function submitOrder() {
+    let form = document.getElementById("orderForm");
+    encodeFormData(form);
+    form.submit();
+
+  }
+
+  function encodeFormData(form) {
+    let inputs = form.querySelectorAll(
+        "input[type='hidden'], input[type='number'], input[type='checkbox']");
+
+    inputs.forEach(function (input) {
+      if (input.type === "checkbox") {
+        input.value = btoa(input.getAttribute('value'));
+      }
+    });
+  }
+</script>
+</body>
+</html>
